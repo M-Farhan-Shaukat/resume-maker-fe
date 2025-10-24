@@ -1,0 +1,120 @@
+.header-container {
+  padding: 24px 0;
+}
+.public--header {
+  padding: 48px 80px 18px !important;
+  border-bottom: 1px solid #c3c3c3;
+  margin: 0 0 125px 0px;
+}
+
+.header {
+  .header-title {
+    font-weight: 500;
+    font-size: 27px;
+    padding: 0 14px 0 19px;
+    color: #704a95;
+    line-height: 40px;
+    border: 0px solid #704a95;
+    border-width: 0px 1px 0px 1px;
+    margin-right: 11px;
+    &.subtitle {
+      border: none;
+      font-size: 20px;
+      margin-right: 0;
+      padding-right: 10px;
+    }
+  }
+
+  .subscription-status {
+    font-size: 16px;
+    font-weight: 400;
+
+    .status-title {
+      line-height: 24px;
+      color: #000000;
+      margin-right: 3px;
+      font-weight: 300;
+    }
+
+    .status-value {
+      line-height: 24px;
+      color: #ff3b30;
+    }
+    .status-value-approved {
+      line-height: 24px;
+      color: #34c759;
+    }
+  }
+
+  .main-logo {
+    width: 176px;
+    height: 43px;
+    img {
+      height: 100%;
+    }
+  }
+}
+
+.alert-bar {
+  background-color: #6b3fa0;
+  color: white;
+  padding: 6px 20px;
+  gap: 0px;
+  border-radius: 16px;
+  margin: 40px 0 10px;
+  .alert-icon {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    margin-right: 5px;
+  }
+
+  a {
+    border-left: 1px solid #fff;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    line-height: 24px;
+    display: flex;
+    min-width: max-content;
+  }
+  .numeric-value {
+    font-weight: 500;
+    margin-right: 5px;
+    font-size: 16px;
+  }
+  .alert-link {
+    display: flex;
+  }
+}
+.alert-content{
+  font-weight: 300;
+}
+
+@media screen and (max-width:1500px){
+  .alert-bar{
+      .numeric-value{
+          font-size:14px;
+      }
+      .alert-content{
+          font-size:14px;
+      }
+      a{
+          font-size:14px;
+      }
+  }
+}
+@media screen and (max-width:1100px){
+  .alert-bar{
+      .numeric-value{
+          font-size:13px;
+      }
+      .alert-content{
+          font-size:12px;
+          font-weight: 300;
+      }
+      a{
+          font-size:13px;
+      }
+  }
+}

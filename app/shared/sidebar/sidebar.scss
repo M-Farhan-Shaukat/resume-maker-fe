@@ -1,0 +1,160 @@
+.searchBox {
+  margin-bottom: 47px;
+  img {
+    top: 9px;
+    left: 13px;
+  }
+}
+.dropdown--inner{
+  text-align: left;
+}
+.pl-37{
+  padding-left: 37px;
+}
+.marklabList li {
+  margin-bottom: 48px;
+  &.mb-0{
+    margin-bottom: 0;
+  }
+  .dropdown-menu a{
+    font-size: 15px;
+    color: #757575;
+  }
+  &.dropdown{
+    .dropdown-menu{
+      padding-top: 20px;
+    }
+  }
+   img[alt="arrow icon"]{
+    filter: brightness(0) saturate(100%) invert(47%) sepia(12%) saturate(12%) hue-rotate(15deg) brightness(94%) contrast(87%);
+    top: 5px;
+   }
+}
+.marklab-sidebar {
+  padding: 43px 25px 58px 0;
+  min-height: 100vh;
+  .marklabList {
+  span {
+    font-size: 16px;
+    font-weight: 300;
+    line-height: 22.4px;
+    color: #747474;
+  }
+  a, .dropdown-menu a{
+    &.active-page {
+      img {
+        filter: brightness(0) saturate(100%) invert(33%) sepia(35%)
+          saturate(852%) hue-rotate(228deg) brightness(93%) contrast(91%);
+      }
+      span {
+        color: #704a95;
+        font-weight: 500;
+      }
+    }
+
+  }
+  .dropdown-menu a img{
+    right: -20px !important;
+  }
+}
+}
+.filter-7474{
+  filter: brightness(0) saturate(100%) invert(47%) sepia(7%) saturate(12%) hue-rotate(75deg) brightness(95%) contrast(89%);
+}
+.sidebarInfo {
+  gap: 13px;
+  margin-bottom: 43px;
+}
+.avatarImage {
+  width: 38px;
+  height: 38px;
+  background-color: #eaddff;
+  overflow: hidden;
+}
+.userInfo {
+  strong {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #09090a;
+  }
+  p {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 19.07px;
+    color: #1f1f22;
+  }
+}
+.notificationBadge {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  margin-left: 5px;
+  &.success-badge {
+    background-color: #34c759;
+  }
+  &.danger-badge {
+    background-color: #ff0101;
+  }
+}
+.search-icon + svg {
+  position: absolute;
+  top: 16px;
+  left: 10px;
+}
+
+// document dropdown
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-header {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown-menu {
+  display: none;
+  list-style-type: none;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 100%;
+}
+
+.dropdown-container.open .dropdown-menu {
+  display: block;
+}
+.hamburger-btn{
+  padding: 13px 13px 0;
+  background-color: #fff;
+  svg{
+    font-size: 24px;
+  }
+}
+.overlay{
+  position: fixed;
+  z-index: -1;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+@media screen and (max-width:1366px) {
+  .marklab-sidebar{
+    padding: 43px 25px 58px;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    transition:left .65s linear;
+    background-color: #fff;
+    z-index: -1;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.05);
+    &.show{
+      left: 0;
+    }
+  }
+}
