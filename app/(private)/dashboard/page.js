@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { LocalServer } from "@/app/utils";
 import ToastNotification from "@/app/utils/Toast";
 import { getErrorMessage } from "@/app/utils/helper";
+import Link from "next/link";
 import "./Dashboard.scss";
 
 const { ToastComponent } = ToastNotification;
@@ -63,9 +64,9 @@ const Dashboard = () => {
           <p>Here's what's happening with your Resume Maker account.</p>
         </div>
         <div className="dashboard-actions">
-          <button className="btn-primary">
+          <Link href="/create-resume" className="btn-primary">
             Create New Resume
-          </button>
+          </Link>
         </div>
       </div>
 

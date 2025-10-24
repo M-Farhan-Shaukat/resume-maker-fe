@@ -1,0 +1,736 @@
+/* Professional Resume Creation Form Styles */
+
+.create-resume-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+}
+
+.create-resume-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.025em;
+  }
+  
+  p {
+    color: #64748b;
+    font-size: 1.125rem;
+    margin: 0;
+  }
+}
+
+.progress-bar {
+  margin-bottom: 3rem;
+  
+  .progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      left: 40px;
+      right: 40px;
+      height: 2px;
+      background: #e2e8f0;
+      z-index: 1;
+    }
+    
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      
+      &.active {
+        .step-number {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-color: #667eea;
+        }
+        
+        .step-label {
+          color: #667eea;
+          font-weight: 600;
+        }
+      }
+      
+      .step-number {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: white;
+        border: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        color: #9ca3af;
+        transition: all 0.3s ease;
+      }
+      
+      .step-label {
+        margin-top: 0.5rem;
+        font-size: 0.875rem;
+        color: #9ca3af;
+        text-align: center;
+        font-weight: 500;
+        transition: all 0.3s ease;
+      }
+    }
+  }
+}
+
+.resume-form {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  
+  .form-content {
+    margin-bottom: 2rem;
+  }
+}
+
+.form-section {
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f1f5f9;
+  }
+  
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0 0 1rem 0;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+  
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+  
+  input, textarea, select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: #1e293b;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    &.error {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+    
+    &::placeholder {
+      color: #9ca3af;
+    }
+  }
+  
+  textarea, select {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  select {
+    min-height: auto;
+    height: 48px;
+  }
+  
+  .error-message {
+    display: block;
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-weight: 500;
+    margin: 0;
+    
+    input[type="checkbox"] {
+      width: auto;
+      margin: 0;
+    }
+  }
+}
+
+.experience-item, .education-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  
+  .experience-header, .education-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #dc2626;
+      }
+    }
+  }
+}
+
+.add-btn {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  
+  &:hover {
+    background: #059669;
+    transform: translateY(-1px);
+  }
+}
+
+.skills-section {
+  margin-top: 2rem;
+  
+  .skill-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    
+    input {
+      flex: 1;
+    }
+    
+    .add-skill-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #5a67d8;
+      }
+    }
+  }
+  
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .skill-tag {
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .remove-skill {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+}
+
+.review-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  
+  h4 {
+    color: #667eea;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+  }
+  
+  h5 {
+    color: #1e293b;
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+  }
+  
+  p {
+    color: #64748b;
+    margin: 0 0 0.5rem 0;
+    line-height: 1.5;
+  }
+  
+  .review-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    
+    &:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+  }
+  
+  .skills-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .skill-display {
+      background: #667eea;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.3);
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+  
+  .btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    padding: 0.875rem 2rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: #e2e8f0;
+      color: #334155;
+    }
+  }
+}
+
+/* Image Upload Styles */
+.image-upload-section {
+  .image-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    
+    img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #e2e8f0;
+    }
+    
+    .remove-image-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #dc2626;
+      }
+    }
+  }
+  
+  .image-upload-placeholder {
+    .upload-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 50%;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 500;
+      gap: 0.5rem;
+      
+      &:hover {
+        border-color: #667eea;
+        background: #f0f9ff;
+        color: #667eea;
+      }
+    }
+  }
+}
+
+/* Roles Section */
+.roles-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  
+  .roles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    h5 {
+      margin: 0;
+      color: #374151;
+      font-size: 1rem;
+    }
+    
+    .add-role-btn {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #059669;
+      }
+    }
+  }
+  
+  .role-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    .role-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      
+      h6 {
+        margin: 0;
+        color: #374151;
+        font-size: 0.875rem;
+      }
+      
+      .remove-role-btn {
+        background: #ef4444;
+        color: white;
+        border: none;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: #dc2626;
+        }
+      }
+    }
+  }
+}
+
+/* Achievement Item */
+.achievement-item, .language-item {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  
+  .achievement-header, .language-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    h4 {
+      margin: 0;
+      color: #374151;
+      font-size: 1rem;
+    }
+    
+    .remove-btn {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #dc2626;
+      }
+    }
+  }
+}
+
+/* Hobbies Section */
+.hobbies-section {
+  margin-top: 2rem;
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  .skill-input-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    
+    input {
+      flex: 1;
+    }
+    
+    .add-skill-btn {
+      background: #667eea;
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: #5a67d8;
+      }
+    }
+  }
+  
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    .skill-tag {
+      background: #10b981;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 1rem;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      
+      .remove-skill {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 1.25rem;
+        line-height: 1;
+        padding: 0;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+        }
+      }
+    }
+  }
+}
+
+/* Skills Section Updates */
+.skills-section {
+  margin-bottom: 2rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .create-resume-container {
+    padding: 1rem;
+  }
+  
+  .create-resume-header h1 {
+    font-size: 2rem;
+  }
+  
+  .progress-bar .progress-steps {
+    flex-direction: column;
+    gap: 1rem;
+    
+    &::before {
+      display: none;
+    }
+  }
+  
+  .resume-form {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 1rem;
+    
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .create-resume-container {
+    padding: 0.5rem;
+  }
+  
+  .resume-form {
+    padding: 1rem;
+  }
+  
+  .experience-item, .education-item {
+    padding: 1rem;
+  }
+}

@@ -67,14 +67,17 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      text-decoration: none;
       
       &:hover {
         background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
         transform: translateY(-1px);
         box-shadow: 0 10px 15px -3px rgba(102, 126, 234, 0.3);
+        color: white;
+        text-decoration: none;
       }
     }
   }
