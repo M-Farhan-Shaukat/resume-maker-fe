@@ -1,7 +1,7 @@
 import { apiHandler } from "@/app/shared/Apihandler";
 
 export async function POST(req) {
-  const url = "/logout";
+  const url = "auth/logout";
 
   return apiHandler({
     url,

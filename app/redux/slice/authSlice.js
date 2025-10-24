@@ -67,11 +67,7 @@ const authSlice = createSlice({
     user: null,
     loading: false,
     error: null,
-    Tfa: false,
     message: "",
-    auth_type: "",
-    available_channels: [],
-    try_another_way: false,
   },
   reducers: {
     // Reducer to reset state when logging out
@@ -79,6 +75,7 @@ const authSlice = createSlice({
       state.user = null;
       state.loading = false;
       state.error = null;
+      state.message = "";
     },
     updateUserInfo: (state, action) => {
       if (state.user) {
@@ -131,27 +128,41 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload["2fa"] === true ? null : action.payload;
-        state.Tfa = action.payload["2fa"];
+        
+        // Structure the user data properly for the frontend
+        state.user = {
+          token: action.payload?.access_token,
+          user: action.payload?.user,
+          access_token: action.payload?.access_token,
+          refresh_token: action.payload?.refresh_token,
+          id_token: action.payload?.id_token,
+          token_type: action.payload?.token_type,
+          expires_in: action.payload?.expires_in
+        };
         state.message = action.payload?.message;
-        state.auth_type = action.payload?.verified_through;
-        state.available_channels = action.payload?.available_channels;
-        state.try_another_way = action.payload?.try_another_way;
+        
+        // Store access token in localStorage and cookie for API calls
+        if (action.payload?.access_token && typeof window !== "undefined") {
+          localStorage.setItem("access_token", action.payload.access_token);
+          // Set cookie for middleware
+          document.cookie = `authToken=${action.payload.access_token}; path=/; samesite=strict; max-age=86400`;
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-        state.Tfa = false;
       })
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
         state.loading = false;
         state.error = null;
-        state.Tfa = false;
         state.message = "";
-        state.auth_type = "";
-        state.available_channels = [];
-        state.try_another_way = false;
+        
+        // Clear access token from localStorage and cookie
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("access_token");
+          document.cookie = "authToken=; path=/; samesite=strict; max-age=0";
+        }
       })
       .addCase(updateUser.pending, (state) => {
         state.loading = true;

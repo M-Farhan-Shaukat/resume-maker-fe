@@ -20,7 +20,7 @@ const SignIn = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
 
-  const { user, loading, Tfa } = useSelector((state) => state.user);
+  const { user, loading } = useSelector((state) => state.user);
 
   const initialValues = {
     email: "",
@@ -36,8 +36,10 @@ const SignIn = () => {
     initialValues,
     validationSchema,
     onSubmit: (values) => {
+      console.log("Submitting login form...");
       dispatch(loginUser(values))
         .then((res) => {
+          console.log("Login response:", res);
           localStorage.setItem("email", values?.email);
           localStorage.setItem(
             "verify_through",
@@ -56,12 +58,13 @@ const SignIn = () => {
   }, []);
 
   useEffect(() => {
-    if (user?.token) router.push("/");
-  }, [user]);
+    console.log("User state changed:", user);
+    if (user?.token) {
+      console.log("Redirecting to dashboard...");
+      router.push("/dashboard");
+    }
+  }, [user, router]);
 
-  useEffect(() => {
-    if (Tfa) router.push("/twofactorauthentication");
-  }, [user, Tfa]);
 
   return (
     <div className="signin-container">

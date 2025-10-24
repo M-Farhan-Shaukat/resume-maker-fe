@@ -18,6 +18,7 @@ export function middleware(request) {
     "/document",
     "/provider-data",
     "/home",
+    "/dashboard",
     "/users",
     "/default-document",
   ];
@@ -25,7 +26,7 @@ export function middleware(request) {
   // 🔹 Handle Root Path `/`
   if (pathname === "/") {
     return token
-      ? NextResponse.redirect(new URL("/home", request.url)) // Authenticated users go to admin
+      ? NextResponse.redirect(new URL("/dashboard", request.url)) // Authenticated users go to dashboard
       : NextResponse.redirect(new URL("/signin", request.url)); // Guests go to signin
   }
 
@@ -36,7 +37,7 @@ export function middleware(request) {
 
   // 🔹 Redirect authenticated users away from public routes
   if (token && publicRoutes.some((route) => pathname.startsWith(route))) {
-    return NextResponse.redirect(new URL("/home", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();

@@ -83,6 +83,17 @@ export const LocalServer = axios.create({
 //   }
 // );
 
+LocalServer.interceptors.request.use((config) => {
+  // Add authorization header if token exists
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 LocalServer.interceptors.response.use(
   (response) => {
     // Store current date-time in cookies on successful response
