@@ -8,13 +8,20 @@ import Link from "next/link";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
 import "../../FormFields/sharedInput/Input.scss";
+import GenericField from "@/app/FormFields/sharedInput";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineUser, AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import { LocalServer } from "@/app/utils";
 import ToastNotification from "@/app/utils/Toast";
 import Image from "next/image";
-import logo from "@/public/images/logo.png";
+import logo from "@/public/images/logo.svg";
 
 const { ToastComponent } = ToastNotification;
+
+// Helper function to get error message
+const getErrorMessage = (error) => {
+  return error?.response?.data?.message || "An error occurred. Please try again.";
+};
+
 const Register = () => {
   const router = useRouter();
   const [show, setShow] = useState(false);
@@ -57,81 +64,81 @@ const Register = () => {
   });
 
   return (
-    <div className="auth-container">
-      <div className="auth-wrapper">
-        <div className="auth-logo">
+    <div className="signin-container">
+      <div className="signin-wrapper">
+        <div className="signin-logo">
           <Image 
             src={logo} 
-            alt="CV Maker Logo" 
-            width={120} 
-            height={40}
+            alt="Resume Maker" 
+            width={140} 
+            height={50}
             priority
           />
         </div>
         
-        <div className="auth-card">
-          <div className="auth-header">
-            <h1>Create an Account</h1>
-            <p>Get started with your CV Maker account</p>
+        <div className="signin-card">
+          <div className="signin-header">
+            <h1>Create Account</h1>
+            <p>Get started with your Resume Maker account</p>
           </div>
           
-          <Form onSubmit={formik.handleSubmit} className="auth-form">
+          <Form onSubmit={formik.handleSubmit} className="signin-form">
             <div className="form-group">
               <label htmlFor="name" className="form-label">Full Name</label>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineUser size={20} />
+                  <AiOutlineUser size={18} />
                 </span>
                 <input
                   type="text"
                   id="name"
                   name="name"
-                  className={`form-control ${formik.touched.name && formik.errors.name ? 'is-invalid' : ''}`}
-                  placeholder="John Doe"
+                  className={`form-input ${formik.touched.name && formik.errors.name ? 'error' : ''}`}
+                  placeholder="Enter your full name"
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.name && formik.errors.name && (
-                <div className="invalid-feedback">{formik.errors.name}</div>
+                <span className="error-message">{formik.errors.name}</span>
               )}
             </div>
             
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email Address</label>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineMail size={20} />
+                  <AiOutlineMail size={18} />
                 </span>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  className={`form-control ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
-                  placeholder="you@example.com"
+                  className={`form-input ${formik.touched.email && formik.errors.email ? 'error' : ''}`}
+                  placeholder="Enter your email address"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="invalid-feedback">{formik.errors.email}</div>
+                <span className="error-message">{formik.errors.email}</span>
               )}
             </div>
             
             <div className="form-group">
               <label htmlFor="password" className="form-label">Password</label>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineLock size={20} />
+                  <AiOutlineLock size={18} />
                 </span>
                 <input
                   type={show ? "text" : "password"}
                   id="password"
                   name="password"
-                  className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
-                  placeholder="••••••••"
+                  className={`form-input ${formik.touched.password && formik.errors.password ? 'error' : ''}`}
+                  placeholder="Create a strong password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -140,31 +147,27 @@ const Register = () => {
                   type="button" 
                   className="password-toggle"
                   onClick={() => setShow(!show)}
-                  aria-label={show ? "Hide password" : "Show password"}
                 >
-                  {show ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                  {show ? <AiOutlineEye size={18} /> : <AiOutlineEyeInvisible size={18} />}
                 </button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="invalid-feedback">{formik.errors.password}</div>
+                <span className="error-message">{formik.errors.password}</span>
               )}
-              <small className="form-text text-muted">
-                Must be at least 8 characters long
-              </small>
             </div>
             
             <div className="form-group">
               <label htmlFor="password_confirmation" className="form-label">Confirm Password</label>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineLock size={20} />
+                  <AiOutlineLock size={18} />
                 </span>
                 <input
                   type={showConfirm ? "text" : "password"}
                   id="password_confirmation"
                   name="password_confirmation"
-                  className={`form-control ${formik.touched.password_confirmation && formik.errors.password_confirmation ? 'is-invalid' : ''}`}
-                  placeholder="••••••••"
+                  className={`form-input ${formik.touched.password_confirmation && formik.errors.password_confirmation ? 'error' : ''}`}
+                  placeholder="Confirm your password"
                   value={formik.values.password_confirmation}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -173,24 +176,23 @@ const Register = () => {
                   type="button" 
                   className="password-toggle"
                   onClick={() => setShowConfirm(!showConfirm)}
-                  aria-label={showConfirm ? "Hide password" : "Show password"}
                 >
-                  {showConfirm ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                  {showConfirm ? <AiOutlineEye size={18} /> : <AiOutlineEyeInvisible size={18} />}
                 </button>
               </div>
               {formik.touched.password_confirmation && formik.errors.password_confirmation && (
-                <div className="invalid-feedback">{formik.errors.password_confirmation}</div>
+                <span className="error-message">{formik.errors.password_confirmation}</span>
               )}
             </div>
             
             <Button
               type="submit"
-              className="btn-primary w-100"
-              disabled={!formik.isValid || loading}
+              className="signin-button"
+              disabled={loading}
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span className="spinner"></span>
                   Creating Account...
                 </>
               ) : (
@@ -198,21 +200,19 @@ const Register = () => {
               )}
             </Button>
             
-            <div className="auth-divider">
-              <span>OR</span>
-            </div>
-            
-            <div className="auth-footer">
-              <p>Already have an account? <Link href="/signin" className="auth-link">Sign in</Link></p>
+            <div className="signin-footer">
+              <p>
+                Already have an account? 
+                <Link href="/signin" className="signup-link"> Sign in</Link>
+              </p>
             </div>
           </Form>
         </div>
         
-        <div className="auth-copyright">
-          {new Date().getFullYear()} CV Maker. All rights reserved.
+        <div className="signin-copyright">
+          © {new Date().getFullYear()} Resume Maker. All rights reserved.
         </div>
       </div>
-      <ToastComponent />
     </div>
   );
 };

@@ -3,20 +3,17 @@
 import { useState, useEffect } from "react";
 import { Button, Form } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
-import "./auth-styles.css";
+import "./Form.scss";
 import * as Yup from "yup";
 import Link from "next/link";
 import { useFormik } from "formik";
 import { useRouter } from "next/navigation";
+import "../../FormFields/sharedInput/Input.scss";
+import GenericField from "@/app/FormFields/sharedInput";
 import { loginUser } from "@/app/redux/slice/authSlice";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 import Image from "next/image";
-import logo from "@/public/images/logo.png";
-
-// Helper function to get error message
-const getErrorMessage = (error) => {
-  return error?.response?.data?.message || "An error occurred. Please try again.";
-};
+import logo from "@/public/images/logo.svg";
 
 const SignIn = () => {
   const router = useRouter();
@@ -67,64 +64,64 @@ const SignIn = () => {
   }, [user, Tfa]);
 
   return (
-    <div className="auth-container">
-      <div className="auth-wrapper">
-        <div className="auth-logo">
+    <div className="signin-container">
+      <div className="signin-wrapper">
+        <div className="signin-logo">
           <Image 
             src={logo} 
-            alt="CV Maker Logo" 
-            width={120} 
-            height={40}
+            alt="Resume Maker" 
+            width={140} 
+            height={50}
             priority
           />
         </div>
         
-        <div className="auth-card">
-          <div className="auth-header">
+        <div className="signin-card">
+          <div className="signin-header">
             <h1>Welcome Back</h1>
-            <p>Sign in to your account to continue</p>
+            <p>Sign in to your Resume Maker account</p>
           </div>
           
-          <Form onSubmit={formik.handleSubmit} className="auth-form">
+          <Form onSubmit={formik.handleSubmit} className="signin-form">
             <div className="form-group">
               <label htmlFor="email" className="form-label">Email Address</label>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineMail size={20} />
+                  <AiOutlineMail size={18} />
                 </span>
                 <input
                   type="email"
                   id="email"
                   name="email"
-                  className={`form-control ${formik.touched.email && formik.errors.email ? 'is-invalid' : ''}`}
-                  placeholder="Enter your email"
+                  className={`form-input ${formik.touched.email && formik.errors.email ? 'error' : ''}`}
+                  placeholder="Enter your email address"
                   value={formik.values.email}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
               </div>
               {formik.touched.email && formik.errors.email && (
-                <div className="invalid-feedback">{formik.errors.email}</div>
+                <span className="error-message">{formik.errors.email}</span>
               )}
             </div>
             
             <div className="form-group">
-              <div className="d-flex justify-content-between">
+              <div className="form-label-row">
                 <label htmlFor="password" className="form-label">Password</label>
-                <Link href="/forget" className="forgot-password">
+                <Link href="/forget" className="forgot-link">
                   Forgot Password?
                 </Link>
               </div>
-              <div className="input-group">
+              <div className="input-wrapper">
                 <span className="input-icon">
-                  <AiOutlineLock size={20} />
+                  <AiOutlineLock size={18} />
                 </span>
                 <input
                   type={show ? "text" : "password"}
                   id="password"
                   name="password"
-                  className={`form-control ${formik.touched.password && formik.errors.password ? 'is-invalid' : ''}`}
-                  placeholder="••••••••"
+                  className={`form-input ${formik.touched.password && formik.errors.password ? 'error' : ''}`}
+                  placeholder="Enter your password"
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -133,24 +130,31 @@ const SignIn = () => {
                   type="button" 
                   className="password-toggle"
                   onClick={() => setShow(!show)}
-                  aria-label={show ? "Hide password" : "Show password"}
                 >
-                  {show ? <AiOutlineEye size={20} /> : <AiOutlineEyeInvisible size={20} />}
+                  {show ? <AiOutlineEye size={18} /> : <AiOutlineEyeInvisible size={18} />}
                 </button>
               </div>
               {formik.touched.password && formik.errors.password && (
-                <div className="invalid-feedback">{formik.errors.password}</div>
+                <span className="error-message">{formik.errors.password}</span>
               )}
+            </div>
+            
+            <div className="form-options">
+              <label className="checkbox-wrapper">
+                <input type="checkbox" id="remember" />
+                <span className="checkmark"></span>
+                <span className="checkbox-label">Remember me</span>
+              </label>
             </div>
             
             <Button
               type="submit"
-              className="btn-primary w-100"
-              disabled={!formik.isValid || loading}
+              className="signin-button"
+              disabled={loading}
             >
               {loading ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span className="spinner"></span>
                   Signing in...
                 </>
               ) : (
@@ -158,18 +162,17 @@ const SignIn = () => {
               )}
             </Button>
             
-            <div className="auth-divider">
-              <span>OR</span>
-            </div>
-            
-            <div className="auth-footer">
-              <p>Don't have an account? <Link href="/register" className="auth-link">Sign up</Link></p>
+            <div className="signin-footer">
+              <p>
+                Don't have an account? 
+                <Link href="/register" className="signup-link"> Create one</Link>
+              </p>
             </div>
           </Form>
         </div>
         
-        <div className="auth-copyright">
-          {new Date().getFullYear()} CV Maker. All rights reserved.
+        <div className="signin-copyright">
+          © {new Date().getFullYear()} Resume Maker. All rights reserved.
         </div>
       </div>
     </div>
