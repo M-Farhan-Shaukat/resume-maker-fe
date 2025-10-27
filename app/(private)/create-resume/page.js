@@ -22,17 +22,19 @@ const CreateResume = () => {
     lastName: "",
     email: "",
     phone: "",
+    photo   : null,
     address: "",
     city: "",
     state: "",
-    zipCode: "",
     country: "",
-    portfolio: "",
-    profileImage: null,
     linkedin: "",
-    
-    // Professional Summary
-    summary: "",
+    portfolio: "",
+    description: "",
+    date_of_birth: "",
+    cnic: "",  
+    marital_status: "",
+    religion: "",   
+    zipCode: "",   
     
     // Work Experience
     experiences: [
@@ -124,7 +126,7 @@ const CreateResume = () => {
     lastName: Yup.string().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
     phone: Yup.string().required("Phone number is required"),
-    summary: Yup.string().required("Professional summary is required"),
+    description: Yup.string().required("Professional description is required"),
   });
 
   const formik = useFormik({
@@ -133,12 +135,16 @@ const CreateResume = () => {
     onSubmit: async (values) => {
       try {
         setLoading(true);
+        console.log("Submitting resume with values:", values);
+        console.log("Current token in localStorage:", localStorage.getItem("access_token"));
         const response = await LocalServer.post("/api/resume/create", values);
+        console.log("Resume creation response:", response);
         if (response?.data?.success) {
           ToastComponent("success", "Resume created successfully!");
           // Redirect to dashboard or resume preview
         }
       } catch (error) {
+        console.error("Error creating resume:", error);
         ToastComponent("error", getErrorMessage(error));
       } finally {
         setLoading(false);
@@ -271,6 +277,43 @@ const CreateResume = () => {
     formik.setFieldValue("languages", languages);
   };
 
+  const addCertification = () => {
+    formik.setFieldValue("certifications", [
+      ...formik.values.certifications,
+      {
+        name: "",
+        issuer: "",
+        date: "",
+        expiryDate: "",
+        credentialId: ""
+      }
+    ]);
+  };
+
+  const removeCertification = (index) => {
+    const certifications = formik.values.certifications.filter((_, i) => i !== index);
+    formik.setFieldValue("certifications", certifications);
+  };
+
+  const addProject = () => {
+    formik.setFieldValue("projects", [
+      ...formik.values.projects,
+      {
+        name: "",
+        description: "",
+        technologies: "",
+        startDate: "",
+        endDate: "",
+        url: ""
+      }
+    ]);
+  };
+
+  const removeProject = (index) => {
+    const projects = formik.values.projects.filter((_, i) => i !== index);
+    formik.setFieldValue("projects", projects);
+  };
+
   const addRole = (experienceIndex) => {
     const experiences = [...formik.values.experiences];
     experiences[experienceIndex].roles.push({
@@ -291,7 +334,7 @@ const CreateResume = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        formik.setFieldValue("profileImage", e.target.result);
+        formik.setFieldValue("photo", e.target.result);
       };
       reader.readAsDataURL(file);
     }
@@ -304,14 +347,14 @@ const CreateResume = () => {
           <div className="form-section">
             <h3>Personal Information</h3>
             <div className="form-group">
-              <label htmlFor="profileImage">Profile Image</label>
+              <label htmlFor="photo">Profile Image</label>
               <div className="image-upload-section">
-                {formik.values.profileImage ? (
+                {formik.values.photo ? (
                   <div className="image-preview">
-                    <img src={formik.values.profileImage} alt="Profile" />
+                    <img src={formik.values.photo} alt="Profile" />
                     <button
                       type="button"
-                      onClick={() => formik.setFieldValue("profileImage", null)}
+                      onClick={() => formik.setFieldValue("photo", null)}
                       className="remove-image-btn"
                     >
                       Remove Image
@@ -321,13 +364,13 @@ const CreateResume = () => {
                   <div className="image-upload-placeholder">
                     <input
                       type="file"
-                      id="profileImage"
-                      name="profileImage"
+                      id="photo"
+                      name="photo"
                       accept="image/*"
                       onChange={handleImageUpload}
                       style={{ display: 'none' }}
                     />
-                    <label htmlFor="profileImage" className="upload-btn">
+                    <label htmlFor="photo" className="upload-btn">
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
@@ -404,10 +447,75 @@ const CreateResume = () => {
               </div>
             </div>
 
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="date_of_birth">Date of Birth </label>
+                <input
+                  type="date"
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  value={formik.values.date_of_birth}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={formik.touched.date_of_birth && formik.errors.date_of_birth ? 'error' : ''}
+                />
+                {formik.touched.date_of_birth && formik.errors.date_of_birth && (
+                  <span className="error-message">{formik.errors.date_of_birth}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="cnic"> ID Number</label>
+                <input
+                  type="tel"
+                  id="cnic"
+                  name="cnic"
+                    value={formik.values.cnic}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  className={formik.touched.cnic && formik.errors.cnic ? 'error' : ''}
+                />
+                {formik.touched.cnic && formik.errors.cnic && (
+                  <span className="error-message">{formik.errors.cnic}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="religion">Religion</label>
+                <input
+                  type="text"
+                  id="religion"
+                  name="religion"
+                  value={formik.values.religion}
+                  onChange={formik.handleChange}
+                  placeholder="e.g., Islam, Christianity, etc."
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="marital_status">Marital Status</label>
+                <select
+                  id="marital_status"
+                  name="marital_status"
+                  value={formik.values.marital_status}
+                  onChange={formik.handleChange}
+                >
+                  <option value="">Select Status</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Divorced">Divorced</option>
+                  <option value="Widowed">Widowed</option>
+                </select>
+              </div>
+            </div>
+
+
             <div className="form-group">
               <label htmlFor="address">Address</label>
               <input
-                type="text"
+                type="textarea"
                 id="address"
                 name="address"
                 value={formik.values.address}
@@ -434,6 +542,16 @@ const CreateResume = () => {
                   id="state"
                   name="state"
                   value={formik.values.state}
+                  onChange={formik.handleChange}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="country">Country</label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  value={formik.values.country}
                   onChange={formik.handleChange}
                 />
               </div>
@@ -481,21 +599,21 @@ const CreateResume = () => {
       case 2:
         return (
           <div className="form-section">
-            <h3>Professional Summary</h3>
+            <h3>Professional Description</h3>
             <div className="form-group">
-              <label htmlFor="summary">Professional Summary *</label>
+              <label htmlFor="description">Professional Description *</label>
               <textarea
-                id="summary"
-                name="summary"
+                id="description"
+                name="description"
                 rows="6"
-                value={formik.values.summary}
+                value={formik.values.description}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                className={formik.touched.summary && formik.errors.summary ? 'error' : ''}
-                placeholder="Write a compelling summary of your professional background, key skills, and career objectives..."
+                className={formik.touched.description && formik.errors.description ? 'error' : ''}
+                placeholder="Write a compelling description of your professional background, key skills, and career objectives..."
               />
-              {formik.touched.summary && formik.errors.summary && (
-                <span className="error-message">{formik.errors.summary}</span>
+              {formik.touched.description && formik.errors.description && (
+                <span className="error-message">{formik.errors.description}</span>
               )}
             </div>
 
@@ -1010,6 +1128,171 @@ const CreateResume = () => {
             <button type="button" onClick={addLanguage} className="add-btn">
               + Add Another Language
             </button>
+
+            <h3>Certifications</h3>
+            {formik.values.certifications.map((certification, index) => (
+              <div key={index} className="certification-item">
+                <div className="certification-header">
+                  <h4>Certification {index + 1}</h4>
+                  {formik.values.certifications.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeCertification(index)}
+                      className="remove-btn"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Certification Name</label>
+                    <input
+                      type="text"
+                      name={`certifications.${index}.name`}
+                      value={certification.name}
+                      onChange={formik.handleChange}
+                      placeholder="e.g., AWS Certified Solutions Architect"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Issuing Organization</label>
+                    <input
+                      type="text"
+                      name={`certifications.${index}.issuer`}
+                      value={certification.issuer}
+                      onChange={formik.handleChange}
+                      placeholder="e.g., Amazon Web Services"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Issue Date</label>
+                    <input
+                      type="date"
+                      name={`certifications.${index}.date`}
+                      value={certification.date}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Expiry Date</label>
+                    <input
+                      type="date"
+                      name={`certifications.${index}.expiryDate`}
+                      value={certification.expiryDate}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Credential ID</label>
+                  <input
+                    type="text"
+                    name={`certifications.${index}.credentialId`}
+                    value={certification.credentialId}
+                    onChange={formik.handleChange}
+                    placeholder="e.g., 12345-ABC-XYZ"
+                  />
+                </div>
+              </div>
+            ))}
+            
+            <button type="button" onClick={addCertification} className="add-btn">
+              + Add Another Certification
+            </button>
+
+            <h3>Projects</h3>
+            {formik.values.projects.map((project, index) => (
+              <div key={index} className="project-item">
+                <div className="project-header">
+                  <h4>Project {index + 1}</h4>
+                  {formik.values.projects.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeProject(index)}
+                      className="remove-btn"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Project Name</label>
+                    <input
+                      type="text"
+                      name={`projects.${index}.name`}
+                      value={project.name}
+                      onChange={formik.handleChange}
+                      placeholder="e.g., E-Commerce Platform"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Technologies Used</label>
+                    <input
+                      type="text"
+                      name={`projects.${index}.technologies`}
+                      value={project.technologies}
+                      onChange={formik.handleChange}
+                      placeholder="e.g., React, Node.js, MongoDB"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Start Date</label>
+                    <input
+                      type="date"
+                      name={`projects.${index}.startDate`}
+                      value={project.startDate}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>End Date</label>
+                    <input
+                      type="date"
+                      name={`projects.${index}.endDate`}
+                      value={project.endDate}
+                      onChange={formik.handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    name={`projects.${index}.description`}
+                    value={project.description}
+                    onChange={formik.handleChange}
+                    rows="3"
+                    placeholder="Describe your project..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Project URL</label>
+                  <input
+                    type="url"
+                    name={`projects.${index}.url`}
+                    value={project.url}
+                    onChange={formik.handleChange}
+                    placeholder="https://github.com/yourusername/project"
+                  />
+                </div>
+              </div>
+            ))}
+            
+            <button type="button" onClick={addProject} className="add-btn">
+              + Add Another Project
+            </button>
           </div>
         );
 
@@ -1022,12 +1305,16 @@ const CreateResume = () => {
               <p><strong>Name:</strong> {formik.values.firstName} {formik.values.lastName}</p>
               <p><strong>Email:</strong> {formik.values.email}</p>
               <p><strong>Phone:</strong> {formik.values.phone}</p>
+              {formik.values.date_of_birth && <p><strong>Date of Birth:</strong> {formik.values.date_of_birth}</p>}
+              {formik.values.cnic && <p><strong>ID Number:</strong> {formik.values.cnic}</p>}
+              {formik.values.religion && <p><strong>Religion:</strong> {formik.values.religion}</p>}
+              {formik.values.marital_status && <p><strong>Marital Status:</strong> {formik.values.marital_status}</p>}
               {formik.values.address && <p><strong>Address:</strong> {formik.values.address}</p>}
             </div>
 
             <div className="review-section">
-              <h4>Professional Summary</h4>
-              <p>{formik.values.summary}</p>
+              <h4>Professional Description</h4>
+              <p>{formik.values.description}</p>
             </div>
 
             <div className="review-section">
@@ -1099,6 +1386,34 @@ const CreateResume = () => {
                   <h5>{language.language}</h5>
                   <p><strong>Proficiency:</strong> {language.proficiency}</p>
                   {language.certification && <p><strong>Certification:</strong> {language.certification}</p>}
+                </div>
+              ))}
+            </div>
+
+            <div className="review-section">
+              <h4>Certifications</h4>
+              {formik.values.certifications.map((certification, index) => (
+                <div key={index} className="review-item">
+                  <h5>{certification.name}</h5>
+                  <p><strong>Issuer:</strong> {certification.issuer}</p>
+                  {certification.date && <p><strong>Issue Date:</strong> {certification.date}</p>}
+                  {certification.expiryDate && <p><strong>Expiry Date:</strong> {certification.expiryDate}</p>}
+                  {certification.credentialId && <p><strong>Credential ID:</strong> {certification.credentialId}</p>}
+                </div>
+              ))}
+            </div>
+
+            <div className="review-section">
+              <h4>Projects</h4>
+              {formik.values.projects.map((project, index) => (
+                <div key={index} className="review-item">
+                  <h5>{project.name}</h5>
+                  {project.technologies && <p><strong>Technologies:</strong> {project.technologies}</p>}
+                  {(project.startDate || project.endDate) && (
+                    <p><strong>Duration:</strong> {project.startDate} - {project.endDate || 'Present'}</p>
+                  )}
+                  {project.description && <p>{project.description}</p>}
+                  {project.url && <p><strong>URL:</strong> <a href={project.url} target="_blank" rel="noopener noreferrer">{project.url}</a></p>}
                 </div>
               ))}
             </div>
