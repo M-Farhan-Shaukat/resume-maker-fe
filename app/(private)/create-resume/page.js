@@ -129,6 +129,15 @@ const CreateResume = () => {
     email: Yup.string().email("Invalid email").required("Email is required"),
     phone: Yup.string().required("Phone number is required"),
     description: Yup.string().required("Professional description is required"),
+    education: Yup.array().of(
+      Yup.object({
+        gpa: Yup.number()
+          .nullable()
+          .transform((value, originalValue) => (originalValue === "" ? null : value))
+          .min(0, "GPA must be at least 0")
+          .max(4, "GPA cannot exceed 4.0"),
+      })
+    ),
   });
 
   const formik = useFormik({
@@ -818,12 +827,26 @@ const CreateResume = () => {
                   <div className="form-group">
                     <label>GPA</label>
                     <input
-                      type="text"
+                      type="number"
                       name={`education.${index}.gpa`}
                       value={edu.gpa}
-                      onChange={formik.handleChange}
-                      placeholder="e.g., 3.8"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        const num = val === "" ? "" : Number(val);
+                        if (val === "" || (!Number.isNaN(num) && num <= 4 && num >= 0)) {
+                          formik.setFieldValue(`education.${index}.gpa`, val);
+                        }
+                      }}
+                      step="0.01"
+                      min="0"
+                      max="4"
+                      placeholder="e.g., 3.80"
                     />
+                    {formik.touched.education && formik.errors.education &&
+                      formik.errors.education[index] && formik.touched.education[index] &&
+                      formik.errors.education[index].gpa && (
+                        <span className="error-message">{formik.errors.education[index].gpa}</span>
+                      )}
                   </div>
                 </div>
 
