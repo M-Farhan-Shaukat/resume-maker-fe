@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button, Form } from "reactstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -12,6 +13,7 @@ import "./CreateResume.scss";
 const { ToastComponent } = ToastNotification;
 
 const CreateResume = () => {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
@@ -141,7 +143,7 @@ const CreateResume = () => {
         console.log("Resume creation response:", response);
         if (response?.data?.success) {
           ToastComponent("success", "Resume created successfully!");
-          // Redirect to dashboard or resume preview
+          router.push("/resumes");
         }
       } catch (error) {
         console.error("Error creating resume:", error);
