@@ -22,7 +22,7 @@ export async function POST(req) {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
         Accept: "application/json",
-        authorization: access_token ? `${access_token}` : "",
+        Authorization: access_token ? `${access_token}` : "",
       },
     });
 

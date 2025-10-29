@@ -16,8 +16,9 @@ export async function apiHandler({
     let access_token = null;
     if (requireAuth) {
       // Check if token is already in headers (passed from client)
-      if (headers.authorization) {
-        access_token = headers.authorization.replace('Bearer ', '');
+      const authHeader = headers.authorization || headers.Authorization;
+      if (authHeader) {
+        access_token = authHeader.replace('Bearer ', '');
       } else {
         // Try to get token from localStorage first (client-side)
         if (typeof window !== "undefined") {
@@ -60,7 +61,7 @@ export async function apiHandler({
         "Access-Control-Allow-Origin": "*",
         Accept: "application/json",
         ...(access_token
-          ? { authorization: `Bearer ${access_token}` }
+          ? { Authorization: `${access_token}` }
           : {}),
         ...headers,
       },

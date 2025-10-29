@@ -13,15 +13,24 @@ export async function GET(req) {
   const search = parsedParams?.search;
   const orderBy = parsedParams?.orderBy;
   const sortBy = parsedParams?.sortBy;
+  
+  // Also check if token is passed in Authorization header from client
+  const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
+  const token = access_token || authHeader;
+  
+  console.log("Resume listing - Token from cookie:", access_token);
+  console.log("Resume listing - Token from header:", authHeader);
+  console.log("Resume listing - Final token to use:", token);
+  
   try {
     const res = await API.get(
-      `/users?page=${page}&view=${view}&search=${search}&sortBy=${sortBy}&orderBy=${orderBy}`,
+      `/resume?page=${page}&view=${view}&search=${search}&sortBy=${sortBy}&orderBy=${orderBy}`,
       {
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
           Accept: "application/json",
-          authorization: access_token ? `${access_token}` : "",
+          Authorization: token ? `${token}` : "",
         },
       }
     );

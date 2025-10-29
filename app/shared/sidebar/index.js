@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { User, Avatar, Logout, HomeIcon } from "@/public/images";
+import { User, Avatar, Logout, HomeIcon, Doc } from "@/public/images";
 import "./sidebar.scss";
 import Link from "next/link";
 import Image from "next/image";
@@ -110,6 +110,13 @@ export default function Sidebar() {
             <NavLink href="/home">
               <Image className="me-3" src={HomeIcon} alt="home icon" />
               <span>Home</span>
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink href="/resumes">
+              <Image className="me-3" src={Doc} alt="resume icon" />
+              <span>Resume</span>
             </NavLink>
           </li>
 

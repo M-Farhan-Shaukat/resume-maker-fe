@@ -87,8 +87,12 @@ LocalServer.interceptors.request.use((config) => {
   // Add authorization header if token exists
   if (typeof window !== "undefined") {
     const token = localStorage.getItem("access_token");
+    console.log("LocalServer interceptor - Token from localStorage:", token);
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `${token}`;
+      console.log("LocalServer interceptor - Added Authorization header:", config.headers.Authorization);
+    } else {
+      console.log("LocalServer interceptor - No token found in localStorage");
     }
   }
   return config;

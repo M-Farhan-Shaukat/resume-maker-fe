@@ -31,6 +31,7 @@ export async function POST(req) {
 
       return NextResponse.json({
         ...res.data,
+        access_token: res.data?.token || res.data?.access_token,
         success: true,
       });
     }
