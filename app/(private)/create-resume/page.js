@@ -124,25 +124,224 @@ const CreateResume = () => {
   };
 
   const validationSchema = Yup.object({
-    firstName: Yup.string().required("First name is required"),
-    lastName: Yup.string().required("Last name is required"),
+    firstName: Yup.string().trim().required("First name is required"),
+    lastName: Yup.string().trim().required("Last name is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phone: Yup.string().required("Phone number is required"),
-    description: Yup.string().required("Professional description is required"),
+    phone: Yup.string()
+      .matches(/^[0-9+\-()\s]{7,20}$/i, "Enter a valid phone")
+      .required("Phone number is required"),
+    description: Yup.string().trim().required("Professional description is required"),
+    experiences: Yup.array().of(
+      Yup.object({
+        company: Yup.string().trim().required("Company is required"),
+        position: Yup.string().trim().required("Position is required"),
+        startDate: Yup.string().required("Start date is required"),
+        endDate: Yup.string().when("current", {
+          is: false,
+          then: (schema) => schema.required("End date is required"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        current: Yup.boolean().nullable(),
+        description: Yup.string().nullable(),
+        location: Yup.string().nullable(),
+        roles: Yup.array().of(
+          Yup.object({
+            role: Yup.string().nullable(),
+            responsibilities: Yup.string().nullable(),
+          })
+        ),
+      })
+    ),
     education: Yup.array().of(
       Yup.object({
+        institution: Yup.string().trim().required("Institution is required"),
+        degree: Yup.string().trim().required("Degree is required"),
+        field: Yup.string().trim().required("Field is required"),
+        startDate: Yup.string().required("Start date is required"),
+        endDate: Yup.string().when("current", {
+          is: false,
+          then: (schema) => schema.required("End date is required"),
+          otherwise: (schema) => schema.notRequired(),
+        }),
+        current: Yup.boolean().nullable(),
         gpa: Yup.number()
           .nullable()
           .transform((value, originalValue) => (originalValue === "" ? null : value))
           .min(0, "GPA must be at least 0")
           .max(4, "GPA cannot exceed 4.0"),
+        location: Yup.string().nullable(),
+      })
+    ),
+    technicalSkills: Yup.array().of(Yup.string().trim()),
+    softSkills: Yup.array().of(Yup.string().trim()),
+    achievements: Yup.array().of(
+      Yup.object({
+        title: Yup.string().trim().nullable(),
+        description: Yup.string().nullable(),
+        date: Yup.string().nullable(),
+        organization: Yup.string().nullable(),
+      })
+    ),
+    hobbies: Yup.array().of(Yup.string().trim()),
+    languages: Yup.array().of(
+      Yup.object({
+        language: Yup.string().trim().nullable(),
+        proficiency: Yup.string().trim().nullable(),
+        certification: Yup.string().trim().nullable(),
+      })
+    ),
+    certifications: Yup.array().of(
+      Yup.object({
+        name: Yup.string().trim().nullable(),
+        issuer: Yup.string().trim().nullable(),
+        date: Yup.string().nullable(),
+        expiryDate: Yup.string().nullable(),
+        credentialId: Yup.string().trim().nullable(),
+      })
+    ),
+    projects: Yup.array().of(
+      Yup.object({
+        name: Yup.string().trim().nullable(),
+        description: Yup.string().nullable(),
+        technologies: Yup.string().trim().nullable(),
+        startDate: Yup.string().nullable(),
+        endDate: Yup.string().nullable(),
+        url: Yup.string().url("Enter a valid URL").nullable(),
       })
     ),
   });
 
+  // Utility: find the first error field path (e.g., "experiences.0.company")
+  const getFirstErrorPath = (errorsObj) => {
+    const stack = [{ obj: errorsObj, path: "" }];
+    while (stack.length) {
+      const { obj, path } = stack.shift();
+      if (typeof obj === "string") return path;
+      if (Array.isArray(obj)) {
+        for (let i = 0; i < obj.length; i++) {
+          if (obj[i] !== undefined) {
+            const p = path ? `${path}.${i}` : `${i}`;
+            stack.push({ obj: obj[i], path: p });
+          }
+        }
+      } else if (obj && typeof obj === "object") {
+        for (const key of Object.keys(obj)) {
+          const p = path ? `${path}.${key}` : key;
+          stack.push({ obj: obj[key], path: p });
+        }
+      }
+    }
+    return null;
+  };
+
+  // Map field path to the step number where it is located
+  const getStepForField = (fieldPath) => {
+    if (!fieldPath) return 1;
+    const step1Prefixes = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "date_of_birth",
+      "cnic",
+      "religion",
+      "marital_status",
+      "address",
+      "city",
+      "state",
+      "country",
+      "zipCode",
+      "portfolio",
+      "linkedin",
+      "photo",
+    ];
+    const step2Prefixes = ["description", "experiences"];
+    const step3Prefixes = [
+      "education",
+      "technicalSkills",
+      "softSkills",
+      "achievements",
+      "hobbies",
+      "languages",
+      "certifications",
+      "projects",
+    ];
+
+    if (step1Prefixes.some((p) => fieldPath.startsWith(p))) return 1;
+    if (step2Prefixes.some((p) => fieldPath.startsWith(p))) return 2;
+    if (step3Prefixes.some((p) => fieldPath.startsWith(p))) return 3;
+    return 1;
+  };
+
+  // Focus and scroll to field by its name
+  const focusFieldByName = (name) => {
+    if (!name) return;
+    // Convert array indices to bracket-compatible selector already used by name
+    const selector = `[name="${name}"]`;
+    const el = typeof document !== "undefined" && document.querySelector(selector);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      if (typeof el.focus === "function") {
+        el.focus({ preventScroll: true });
+      }
+    }
+  };
+
+  // Step field groups (top-level keys)
+  const getFieldsForStep = (step) => {
+    if (step === 1) return [
+      "firstName", "lastName", "email", "phone",
+      "date_of_birth","cnic","religion","marital_status","address","city","state","country","zipCode","portfolio","linkedin","photo"
+    ];
+    if (step === 2) return ["description", "experiences"];
+    if (step === 3) return [
+      "education", "technicalSkills","softSkills","achievements","hobbies","languages","certifications","projects"
+    ];
+    return [];
+  };
+
+  // Mark all fields on a step as touched so errors display
+  const markStepTouched = (step) => {
+    const fields = getFieldsForStep(step);
+    fields.forEach((key) => {
+      if (key === "experiences") {
+        formik.values.experiences.forEach((_, i) => {
+          formik.setFieldTouched(`experiences.${i}.company`, true, false);
+          formik.setFieldTouched(`experiences.${i}.position`, true, false);
+          formik.setFieldTouched(`experiences.${i}.startDate`, true, false);
+          formik.setFieldTouched(`experiences.${i}.endDate`, true, false);
+        });
+      } else if (key === "education") {
+        formik.values.education.forEach((_, i) => {
+          formik.setFieldTouched(`education.${i}.institution`, true, false);
+          formik.setFieldTouched(`education.${i}.degree`, true, false);
+          formik.setFieldTouched(`education.${i}.field`, true, false);
+          formik.setFieldTouched(`education.${i}.startDate`, true, false);
+          formik.setFieldTouched(`education.${i}.endDate`, true, false);
+          formik.setFieldTouched(`education.${i}.gpa`, true, false);
+        });
+      } else {
+        formik.setFieldTouched(key, true, false);
+      }
+    });
+  };
+
+  // Validate only the current step by filtering form-level errors
+  const validateCurrentStep = async () => {
+    const allErrors = await formik.validateForm();
+    const stepFields = getFieldsForStep(currentStep);
+    const stepErrorEntries = Object.entries(allErrors).filter(([path]) =>
+      stepFields.some((prefix) => path === prefix || path.startsWith(`${prefix}.`))
+    );
+    const stepErrors = Object.fromEntries(stepErrorEntries);
+    return stepErrors;
+  };
+
   const formik = useFormik({
     initialValues,
     validationSchema,
+    validateOnBlur: true,
+    validateOnChange: true,
     onSubmit: async (values) => {
       try {
         setLoading(true);
@@ -163,10 +362,31 @@ const CreateResume = () => {
     },
   });
 
-  const nextStep = () => {
-    if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+  // Attempt submit: validate, focus first error (and move step), otherwise submit
+  const attemptSubmit = async () => {
+    const errors = await formik.validateForm();
+    const hasErrors = !!errors && Object.keys(errors).length > 0;
+    if (hasErrors) {
+      const firstPath = getFirstErrorPath(errors);
+      const step = getStepForField(firstPath);
+      setCurrentStep(step);
+      // Wait for step render then focus
+      setTimeout(() => focusFieldByName(firstPath), 0);
+      return;
     }
+    formik.handleSubmit();
+  };
+
+  const nextStep = async () => {
+    if (currentStep >= totalSteps) return;
+    const stepErrors = await validateCurrentStep();
+    if (stepErrors && Object.keys(stepErrors).length > 0) {
+      markStepTouched(currentStep);
+      const firstPath = getFirstErrorPath(stepErrors);
+      setTimeout(() => focusFieldByName(firstPath), 0);
+      return;
+    }
+    setCurrentStep(currentStep + 1);
   };
 
   const prevStep = () => {
@@ -463,8 +683,8 @@ const CreateResume = () => {
                 <label htmlFor="date_of_birth">Date of Birth </label>
                 <input
                   type="date"
-                  id="dateOfBirth"
-                  name="dateOfBirth"
+                  id="date_of_birth"
+                  name="date_of_birth"
                   value={formik.values.date_of_birth}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
@@ -652,8 +872,19 @@ const CreateResume = () => {
                       name={`experiences.${index}.position`}
                       value={experience.position}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.experiences && formik.touched.experiences[index] &&
+                        formik.errors.experiences && formik.errors.experiences[index] &&
+                        formik.errors.experiences[index].position ? 'error' : ''
+                      }
                       placeholder="e.g., Software Engineer"
                     />
+                    {formik.touched.experiences && formik.touched.experiences[index] &&
+                      formik.errors.experiences && formik.errors.experiences[index] &&
+                      formik.errors.experiences[index].position && (
+                        <span className="error-message">{formik.errors.experiences[index].position}</span>
+                      )}
                   </div>
                   <div className="form-group">
                     <label>Company</label>
@@ -662,8 +893,19 @@ const CreateResume = () => {
                       name={`experiences.${index}.company`}
                       value={experience.company}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.experiences && formik.touched.experiences[index] &&
+                        formik.errors.experiences && formik.errors.experiences[index] &&
+                        formik.errors.experiences[index].company ? 'error' : ''
+                      }
                       placeholder="e.g., Tech Corp"
                     />
+                    {formik.touched.experiences && formik.touched.experiences[index] &&
+                      formik.errors.experiences && formik.errors.experiences[index] &&
+                      formik.errors.experiences[index].company && (
+                        <span className="error-message">{formik.errors.experiences[index].company}</span>
+                      )}
                   </div>
                 </div>
 
@@ -675,7 +917,18 @@ const CreateResume = () => {
                       name={`experiences.${index}.startDate`}
                       value={experience.startDate}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.experiences && formik.touched.experiences[index] &&
+                        formik.errors.experiences && formik.errors.experiences[index] &&
+                        formik.errors.experiences[index].startDate ? 'error' : ''
+                      }
                     />
+                    {formik.touched.experiences && formik.touched.experiences[index] &&
+                      formik.errors.experiences && formik.errors.experiences[index] &&
+                      formik.errors.experiences[index].startDate && (
+                        <span className="error-message">{formik.errors.experiences[index].startDate}</span>
+                      )}
                   </div>
                   <div className="form-group">
                     <label>End Date</label>
@@ -684,8 +937,19 @@ const CreateResume = () => {
                       name={`experiences.${index}.endDate`}
                       value={experience.endDate}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.experiences && formik.touched.experiences[index] &&
+                        formik.errors.experiences && formik.errors.experiences[index] &&
+                        formik.errors.experiences[index].endDate ? 'error' : ''
+                      }
                       disabled={experience.current}
                     />
+                    {formik.touched.experiences && formik.touched.experiences[index] &&
+                      formik.errors.experiences && formik.errors.experiences[index] &&
+                      formik.errors.experiences[index].endDate && (
+                        <span className="error-message">{formik.errors.experiences[index].endDate}</span>
+                      )}
                   </div>
                   <div className="form-group checkbox-group">
                     <label>
@@ -798,8 +1062,19 @@ const CreateResume = () => {
                       name={`education.${index}.institution`}
                       value={edu.institution}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.education && formik.touched.education[index] &&
+                        formik.errors.education && formik.errors.education[index] &&
+                        formik.errors.education[index].institution ? 'error' : ''
+                      }
                       placeholder="e.g., University of Technology"
                     />
+                    {formik.touched.education && formik.touched.education[index] &&
+                      formik.errors.education && formik.errors.education[index] &&
+                      formik.errors.education[index].institution && (
+                        <span className="error-message">{formik.errors.education[index].institution}</span>
+                      )}
                   </div>
                   <div className="form-group">
                     <label>Degree</label>
@@ -808,8 +1083,19 @@ const CreateResume = () => {
                       name={`education.${index}.degree`}
                       value={edu.degree}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.education && formik.touched.education[index] &&
+                        formik.errors.education && formik.errors.education[index] &&
+                        formik.errors.education[index].degree ? 'error' : ''
+                      }
                       placeholder="e.g., Bachelor of Science"
                     />
+                    {formik.touched.education && formik.touched.education[index] &&
+                      formik.errors.education && formik.errors.education[index] &&
+                      formik.errors.education[index].degree && (
+                        <span className="error-message">{formik.errors.education[index].degree}</span>
+                      )}
                   </div>
                 </div>
 
@@ -821,8 +1107,19 @@ const CreateResume = () => {
                       name={`education.${index}.field`}
                       value={edu.field}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.education && formik.touched.education[index] &&
+                        formik.errors.education && formik.errors.education[index] &&
+                        formik.errors.education[index].field ? 'error' : ''
+                      }
                       placeholder="e.g., Computer Science"
                     />
+                    {formik.touched.education && formik.touched.education[index] &&
+                      formik.errors.education && formik.errors.education[index] &&
+                      formik.errors.education[index].field && (
+                        <span className="error-message">{formik.errors.education[index].field}</span>
+                      )}
                   </div>
                   <div className="form-group">
                     <label>GPA</label>
@@ -858,7 +1155,18 @@ const CreateResume = () => {
                       name={`education.${index}.startDate`}
                       value={edu.startDate}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.education && formik.touched.education[index] &&
+                        formik.errors.education && formik.errors.education[index] &&
+                        formik.errors.education[index].startDate ? 'error' : ''
+                      }
                     />
+                    {formik.touched.education && formik.touched.education[index] &&
+                      formik.errors.education && formik.errors.education[index] &&
+                      formik.errors.education[index].startDate && (
+                        <span className="error-message">{formik.errors.education[index].startDate}</span>
+                      )}
                   </div>
                   <div className="form-group">
                     <label>End Date</label>
@@ -867,8 +1175,19 @@ const CreateResume = () => {
                       name={`education.${index}.endDate`}
                       value={edu.endDate}
                       onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className={
+                        formik.touched.education && formik.touched.education[index] &&
+                        formik.errors.education && formik.errors.education[index] &&
+                        formik.errors.education[index].endDate ? 'error' : ''
+                      }
                       disabled={edu.current}
                     />
+                    {formik.touched.education && formik.touched.education[index] &&
+                      formik.errors.education && formik.errors.education[index] &&
+                      formik.errors.education[index].endDate && (
+                        <span className="error-message">{formik.errors.education[index].endDate}</span>
+                      )}
                   </div>
                   <div className="form-group checkbox-group">
                     <label>
@@ -1490,7 +1809,7 @@ const CreateResume = () => {
               Next
             </Button>
           ) : (
-            <Button type="submit" className="btn-primary" disabled={loading}>
+            <Button type="button" onClick={attemptSubmit} className="btn-primary" disabled={loading}>
               {loading ? 'Creating Resume...' : 'Create Resume'}
             </Button>
           )}
